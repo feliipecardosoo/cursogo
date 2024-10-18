@@ -2,6 +2,7 @@ package auxiliar
 
 import "fmt"
 
+// Escrever teste
 func Escrever() {
-	fmt.Println("Escrevendo do pacote auxiliar")
+	fmt.Println("teste")
 }
