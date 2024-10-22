@@ -10,4 +10,8 @@ func main() {
 
 	// Inves de usarmos int32, podemos usar seu ALIAS rune
 	// Inves de usarmos uint8, podemos usar seu ALIAS byte
+
+	// Numeros reais
+
+	// float32, float64
 }
