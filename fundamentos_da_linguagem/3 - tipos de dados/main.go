@@ -14,4 +14,6 @@ func main() {
 	// Numeros reais
 
 	// float32, float64
+
+	// string é só falar string mesmo kkkk...
 }
