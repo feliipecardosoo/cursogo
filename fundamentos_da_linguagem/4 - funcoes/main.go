@@ -22,6 +22,6 @@ func main() {
 
 	f("testando")
 
-	somaCal, subCal := calculosMatematicos(2, 4)
-	fmt.Println(somaCal, subCal)
+	somaCal, _ := calculosMatematicos(2, 4)
+	fmt.Println(somaCal)
 }
