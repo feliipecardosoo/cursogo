@@ -3,18 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	// var nome string
-	// fmt.Scanf("%s", &nome)
+	fmt.Println("Digite seu nome: ")
+	var nome string
 
-	// fmt.Println(nome)
+	fmt.Scanf("%s", &nome)
 
-	var nomeUm string = "Felipe"
-	var nome2 *string
-	nome2 = &nomeUm
-
-	fmt.Println(*nome2, nomeUm)
-
-	nomeUm = "Joao"
-
-	fmt.Println(*nome2, nomeUm)
+	fmt.Println("bem vindo," + nome)
+	fmt.Println(&nome)
 }
