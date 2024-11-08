@@ -107,8 +107,32 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 	ID, erro := strconv.ParseInt(parametros["id"], 10, 32)
 	if erro != nil {
 		w.Write([]byte("Erro ao converter o parametro para inteiro"))
+		return
 	}
 
-	fmt.Println(ID)
+	db, erro := banco.Conectar()
+	if erro != nil {
+		http.Error(w, "Erro ao conectar no banco de dados", http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
 
+	linha, erro := db.Query("select * from usuarios where id = ?", ID)
+	if erro != nil {
+		http.Error(w, "Erro ao buscar usuario", http.StatusInternalServerError)
+		return
+	}
+
+	var usuario usuario
+	if linha.Next() {
+		if erro := linha.Scan(&usuario.ID, &usuario.Nome); erro != nil {
+			http.Error(w, "Erro ao escanear usuario", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	if erro := json.NewEncoder(w).Encode(usuario); erro != nil {
+		http.Error(w, "Erro ao converter os dados", http.StatusInternalServerError)
+	}
 }
