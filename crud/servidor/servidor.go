@@ -95,6 +95,7 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Configura o cabeçalho da resposta para JSON
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
 	// Retorna os usuários como JSON
