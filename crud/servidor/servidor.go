@@ -28,6 +28,8 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(usuario)
+
 	db, erro := banco.Conectar()
 	if erro != nil {
 		w.Write([]byte("Erro ao conectar no banco de dados"))
