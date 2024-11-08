@@ -28,8 +28,6 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(usuario)
-
 	db, erro := banco.Conectar()
 	if erro != nil {
 		w.Write([]byte("Erro ao conectar no banco de dados"))
@@ -57,5 +55,29 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(fmt.Sprintf("ID: %d", iduser)))
+}
+
+// BuscarUsuarios retorna todos os usuarios do banco
+func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
+	db, erro := banco.Conectar()
+	if erro != nil {
+		w.Write([]byte("Erro ao conectar no banco de dados"))
+	}
+	defer db.Close()
+
+	linhas, erro := db.Query("select * from usuarios")
+	if erro != nil {
+		w.Write([]byte("Erro ao buscar os usuarios"))
+	}
+	defer linhas.Close()
+
+	fmt.Println(linhas)
+
+	// var usuarios []usuario
+	// fmt.Println(usuarios)
+}
+
+// BuscarUsuario retorna um usuario do banco
+func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 
 }

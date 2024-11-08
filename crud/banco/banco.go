@@ -35,7 +35,5 @@ func Conectar() (*sql.DB, error) {
 		return nil, erro
 	}
 
-	// Retorna a conexão com o banco se tudo correr bem
-	log.Println("Conexão com o banco de dados estabelecida com sucesso.")
 	return db, nil
 }
