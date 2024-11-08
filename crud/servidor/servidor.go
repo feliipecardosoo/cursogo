@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -103,5 +104,11 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 
-	fmt.Println(parametros)
+	ID, erro := strconv.ParseInt(parametros["id"], 10, 32)
+	if erro != nil {
+		w.Write([]byte("Erro ao converter o parametro para inteiro"))
+	}
+
+	fmt.Println(ID)
+
 }
