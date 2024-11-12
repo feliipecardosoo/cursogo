@@ -206,24 +206,25 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Erro ao converter usuario para struct"))
 		return
 	}
-	fmt.Println(usuarioBody)
+	fmt.Println(usuarioBody.Nome)
+	fmt.Println(ID)
 
-	linha, erro := db.Query("update usuarios set nome where id = ?", ID)
-	if erro != nil {
-		http.Error(w, "Erro ao deletar usuario", http.StatusInternalServerError)
-		return
-	}
+	// linha, erro := db.Query("update usuarios set nome where id = ?", ID)
+	// if erro != nil {
+	// 	http.Error(w, "Erro ao deletar usuario", http.StatusInternalServerError)
+	// 	return
+	// }
 
-	var usuario usuario
-	if linha.Next() {
-		if erro := linha.Scan(&usuario.ID, &usuario.Nome); erro != nil {
-			http.Error(w, "Erro ao escanear usuario", http.StatusInternalServerError)
-			return
-		}
-	}
+	// var usuario usuario
+	// if linha.Next() {
+	// 	if erro := linha.Scan(&usuario.ID, &usuario.Nome); erro != nil {
+	// 		http.Error(w, "Erro ao escanear usuario", http.StatusInternalServerError)
+	// 		return
+	// 	}
+	// }
 
-	w.WriteHeader(http.StatusAccepted)
-	if erro := json.NewEncoder(w).Encode(usuario); erro != nil {
-		http.Error(w, "Erro ao converter os dados", http.StatusInternalServerError)
-	}
+	// w.WriteHeader(http.StatusAccepted)
+	// if erro := json.NewEncoder(w).Encode(usuario); erro != nil {
+	// 	http.Error(w, "Erro ao converter os dados", http.StatusInternalServerError)
+	// }
 }
