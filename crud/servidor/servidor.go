@@ -136,3 +136,10 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erro ao converter os dados", http.StatusInternalServerError)
 	}
 }
+
+// DeletarUsuario deleta o usuario passado por parametro pela URL
+func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+
+	fmt.Println(parametros)
+}
