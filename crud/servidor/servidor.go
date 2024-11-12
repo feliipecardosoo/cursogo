@@ -141,5 +141,10 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 
-	fmt.Println(parametros)
+	ID, erro := strconv.ParseInt(parametros["id"], 10, 32)
+	if erro != nil {
+		w.Write([]byte("Erro ao converter o parametro para inteiro"))
+		return
+	}
+	fmt.Println(ID)
 }
