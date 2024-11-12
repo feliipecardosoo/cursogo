@@ -4,6 +4,7 @@ import (
 	"crud/banco"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -177,14 +178,17 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // AtualizarUsuario vai atualizar o usuario que foi passado pelo parametro
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
+	// Obter os parâmetros da URL
 	parametros := mux.Vars(r)
 
-	ID, erro := strconv.ParseInt(parametros["id"], 10, 32)
+	// Converter o parâmetro "id" para inteiro
+	ID, erro := strconv.ParseInt(parametros["id"], 10, 64)
 	if erro != nil {
-		w.Write([]byte("Erro ao converter o parametro para inteiro"))
+		http.Error(w, "Erro ao converter o parametro para inteiro", http.StatusBadRequest)
 		return
 	}
 
+	// Conectar ao banco de dados
 	db, erro := banco.Conectar()
 	if erro != nil {
 		http.Error(w, "Erro ao conectar no banco de dados", http.StatusInternalServerError)
@@ -192,39 +196,36 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	fmt.Println("chegou até aqui")
-
-	corpoReq, erro := ioutil.ReadAll(r.Body)
+	// Ler o corpo da requisição
+	corpoReq, erro := io.ReadAll(r.Body)
 	if erro != nil {
-		w.Write([]byte("Falha ao ler o corpo da requisição, parece estar vazio"))
+		http.Error(w, "Falha ao ler o corpo da requisição", http.StatusBadRequest)
 		return
 	}
 
+	// Deserializar o corpo para a estrutura "usuario"
 	var usuarioBody usuario
-
 	if erro = json.Unmarshal(corpoReq, &usuarioBody); erro != nil {
-		w.Write([]byte("Erro ao converter usuario para struct"))
+		http.Error(w, "Erro ao converter o usuário para struct", http.StatusBadRequest)
 		return
 	}
-	fmt.Println(usuarioBody.Nome)
-	fmt.Println(ID)
 
-	// linha, erro := db.Query("update usuarios set nome where id = ?", ID)
-	// if erro != nil {
-	// 	http.Error(w, "Erro ao deletar usuario", http.StatusInternalServerError)
-	// 	return
-	// }
+	// Preparar a query de atualização
+	statement, erro := db.Prepare("UPDATE usuarios SET nome = ? WHERE id = ?")
+	if erro != nil {
+		http.Error(w, "Erro ao criar o statement", http.StatusInternalServerError)
+		return
+	}
+	defer statement.Close()
 
-	// var usuario usuario
-	// if linha.Next() {
-	// 	if erro := linha.Scan(&usuario.ID, &usuario.Nome); erro != nil {
-	// 		http.Error(w, "Erro ao escanear usuario", http.StatusInternalServerError)
-	// 		return
-	// 	}
-	// }
+	// Executar a query com os parâmetros fornecidos
+	_, erro = statement.Exec(usuarioBody.Nome, ID)
+	if erro != nil {
+		http.Error(w, "Erro ao executar a query de atualização", http.StatusInternalServerError)
+		return
+	}
 
-	// w.WriteHeader(http.StatusAccepted)
-	// if erro := json.NewEncoder(w).Encode(usuario); erro != nil {
-	// 	http.Error(w, "Erro ao converter os dados", http.StatusInternalServerError)
-	// }
+	// Retornar uma resposta de sucesso
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Usuário atualizado com sucesso"))
 }
