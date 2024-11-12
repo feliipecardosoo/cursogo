@@ -174,3 +174,56 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+// AtualizarUsuario vai atualizar o usuario que foi passado pelo parametro
+func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+
+	ID, erro := strconv.ParseInt(parametros["id"], 10, 32)
+	if erro != nil {
+		w.Write([]byte("Erro ao converter o parametro para inteiro"))
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		http.Error(w, "Erro ao conectar no banco de dados", http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	fmt.Println("chegou até aqui")
+
+	corpoReq, erro := ioutil.ReadAll(r.Body)
+	if erro != nil {
+		w.Write([]byte("Falha ao ler o corpo da requisição, parece estar vazio"))
+		return
+	}
+
+	var usuarioBody usuario
+
+	if erro = json.Unmarshal(corpoReq, &usuarioBody); erro != nil {
+		w.Write([]byte("Erro ao converter usuario para struct"))
+		return
+	}
+	fmt.Println(usuarioBody)
+
+	linha, erro := db.Query("update usuarios set nome where id = ?", ID)
+	if erro != nil {
+		http.Error(w, "Erro ao deletar usuario", http.StatusInternalServerError)
+		return
+	}
+
+	var usuario usuario
+	if linha.Next() {
+		if erro := linha.Scan(&usuario.ID, &usuario.Nome); erro != nil {
+			http.Error(w, "Erro ao escanear usuario", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	if erro := json.NewEncoder(w).Encode(usuario); erro != nil {
+		http.Error(w, "Erro ao converter os dados", http.StatusInternalServerError)
+	}
+}

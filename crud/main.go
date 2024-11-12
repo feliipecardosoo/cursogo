@@ -17,6 +17,7 @@ func main() {
 	router.HandleFunc("/usuarios", servidor.BuscarUsuarios).Methods(http.MethodGet)
 	router.HandleFunc("/usuario/{id}", servidor.BuscarUsuario).Methods(http.MethodGet)
 	router.HandleFunc("/usuario/{id}", servidor.DeletarUsuario).Methods(http.MethodDelete)
+	router.HandleFunc("/usuario/{id}", servidor.AtualizarUsuario).Methods(http.MethodPut)
 
 	fmt.Println("Server rodando na porta 5k")
 	log.Fatal(http.ListenAndServe(":5000", router))
